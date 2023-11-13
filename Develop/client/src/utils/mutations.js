@@ -27,13 +27,37 @@ export const ADD_USER = gql`
 `;
 
 export const SAVE_BOOK = gql`
-  mutation saveBook (
-
-  )
+  mutation saveBook ($bookData: BookInput!) {
+    saveBook (bookdata: $bookData) { 
+        _id
+        username
+        email
+        savedBooks {
+            bookID
+            authors
+            image
+            description
+            title
+            link
+        }
+    }
+  }
 `;
 
 export const REMOVE_BOOK = gql`
-  mutation removeBook(
-    
-  ) 
+  mutation removeBook($bookID: ID!) {
+    removeBook(bookID: $bookID) {
+        _id
+        username
+        email
+        savedBooks {
+            bookID
+            authors
+            image
+            description
+            title
+            link
+        }
+    }
+  }
 `;
