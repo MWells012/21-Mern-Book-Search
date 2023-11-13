@@ -14,7 +14,7 @@ const resolvers = {
         
         },
     },
-    
+
     Mutation: {
         login: async (parent, { email, password }) => {
             const user = await User.findOne({ email });
@@ -35,12 +35,31 @@ const resolvers = {
             return { token, user };
           },
 
-        saveBook: {
-
+        saveBook: async (parent, {bookList}, context) => {
+            if (context.user) {
+                const updatedUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id},
+                    { $addToList: {savedBooks: bookList}},
+                    {new: true}
+                );
+                return updatedUser;
+            }
+            
+            throw new AuthenticationError('You need to be logged in to make any updates.');
         },
 
-        removeBook: { 
-
+        removeBook: async (parent, {bookID}, context) => { 
+            if (context.user) {
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id},
+                    { $pull: {savedBooks: (bookID)}},
+                    {new: true}
+                );
+                return updatedUser;
+            }
+           throw new AuthenticationError('You need to be logged in to make any updates.');
         },
     },
-}
+};
+
+module.exports = resolvers;
